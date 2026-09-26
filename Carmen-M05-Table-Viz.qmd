@@ -1,0 +1,170 @@
+---
+title: "M05-Visualizing Data with Tables for MSDM CEP"
+author: "Carmen Jimenez Rodriguez"
+date: '`r format(Sys.time())`'
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    embed-resources: true
+    theme: cosmo
+execute:
+  freeze: auto
+  echo: false
+  warning: false
+  message: false
+editor: visual
+---
+
+# Introduction
+
+In this report, I reflect on what I learned about using tables for data visualization. I also demonstrate how the `gt` and `gtExtras` packages can be used to create tables that are clear, attractive, and useful.
+
+Since we do not have the actual Restaurant at Kellogg Ranch data yet, I used the built-in `pizzaplace` dataset as an example. This allows me to practice the same techniques that I could later use with customer survey data from the restaurant.
+
+::: {.callout-note}
+The pizza data are only being used as an example. The same type of table could later be created with data from The Restaurant at Kellogg Ranch.
+:::
+
+## Essay Prompts and Responses
+
+### Prompt 1: Summarize what you learned from the videos you watched.
+
+The videos helped me understand that an effective table should do more than simply display numbers. A good table should help the reader understand the main comparison and find the most important information easily.
+
+One of the videos explained how table design can affect the way people interpret data. For example, headers should be easy to recognize, unnecessary lines should be avoided, and averages or important values should be separated from the rest of the data. I also learned that data may need to be reorganized from a long format into a wider format when creating a table for a report or presentation.
+
+The other video focused on the `gtExtras` package. It showed how functions such as `gt_plot_summary()` and `gt_plot_dist()` can add descriptive statistics and small visual displays to a table. I learned that tables can include both exact numbers and graphics, which makes them easier to understand.
+
+Overall, the videos showed me that table design is part of communicating the story in the data. The goal is to make the information clear instead of making the reader work too hard to understand it.
+
+### Prompt 2: What did you like about the `gt` and `gtExtras` packages demonstrated in the videos?
+
+What I liked most about `gt` is that it gives the user a lot of control over the appearance of a table. I can add a title, subtitle, better column names, colors, footnotes, source notes, and different styles.
+
+I also liked `gtExtras` because it makes tables more visual. Instead of showing only numbers, I can add bars, distributions, or other small graphics inside the table. The `gt_plot_summary()` function is useful because it can show several descriptive statistics in an organized way.
+
+Another feature I liked was grouping the data with `group_by()` and then using `summarise()` to compare categories. This is especially useful for my CEP project because I will eventually need to compare different customer-experience factors and outcomes.
+
+### Prompt 3: How do tables complement charts for data visualization?
+
+Tables and charts are useful for different reasons. A chart helps the audience see patterns and differences quickly. However, a chart may not show the exact values.
+
+A table provides the specific numbers behind the chart. For example, a chart may show that one pizza category has higher revenue, while a table can show the exact number of orders, pizzas sold, average price, and total revenue.
+
+Using both a table and a chart gives the audience a more complete understanding of the data. The chart shows the overall pattern, and the table provides the details.
+
+### Prompt 4: Under what circumstances would you prefer to use tables rather than charts to visualize data?
+
+I would use a table when exact numbers are important or when I need to compare several measures at the same time. Tables are also helpful when the reader may want to look back at a specific value later.
+
+For my MSDM CEP project, a table would be useful for showing customer-experience measures such as food quality, service quality, perceived value, satisfaction, intention to revisit, and willingness to recommend. These measures could be difficult to compare in one chart, but a table could display them in an organized way.
+
+## Applying Tables to the MSDM CEP Project
+
+### Analytics Objective
+
+> Evaluate how customer-experience factors influence satisfaction, intention to revisit, and willingness to recommend The Restaurant at Kellogg Ranch.
+
+The main factors related to this objective are food quality, service quality, the physical environment and atmosphere, perceived value, and the overall dining experience.
+
+### Prompt 5: Use the data for your MSDM CEP. If you do not have data yet, use the `pizzaplace` dataset.
+
+Because the actual Restaurant at Kellogg Ranch data are not available yet, I used the `pizzaplace` dataset. I grouped the data by pizza category and calculated the number of orders, the number of pizzas sold, the average price, and total revenue.
+
+```{r}
+#| label: tbl-pizza-summary
+#| tbl-cap: "Descriptive summary of pizza sales by category"
+#| echo: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(gt)
+library(gtExtras)
+
+data("pizzaplace", package = "gt")
+
+pizza_summary <- pizzaplace |>
+  group_by(type) |>
+  summarise(
+    orders = n_distinct(id),
+    pizzas_sold = n(),
+    average_price = mean(price),
+    total_revenue = sum(price),
+    .groups = "drop"
+  ) |>
+  arrange(desc(total_revenue))
+
+pizza_summary |>
+  gt(rowname_col = "type") |>
+  tab_header(
+    title = "Pizza Sales Performance by Category",
+    subtitle = "Descriptive statistics from the pizzaplace dataset"
+  ) |>
+  tab_stubhead(label = "Pizza Category") |>
+  cols_label(
+    orders = "Orders",
+    pizzas_sold = "Pizzas Sold",
+    average_price = "Average Price",
+    total_revenue = "Total Revenue"
+  ) |>
+  tab_spanner(
+    label = "Sales Summary",
+    columns = c(orders, pizzas_sold, average_price, total_revenue)
+  ) |>
+  fmt_number(
+    columns = c(orders, pizzas_sold),
+    decimals = 0
+  ) |>
+  fmt_currency(
+    columns = c(average_price, total_revenue),
+    currency = "USD",
+    decimals = 2
+  ) |>
+  data_color(
+    columns = total_revenue,
+    palette = c("#E8F1F5", "#2C7FB8")
+  ) |>
+  gt_plt_bar(
+    column = total_revenue,
+    keep_column = TRUE,
+    scale_type = "number",
+    color = "#2C7FB8"
+  ) |>
+  gt_theme_guardian() |>
+  tab_source_note(
+    source_note = "Source: gt package, pizzaplace dataset."
+  ) |>
+  tab_footnote(
+    footnote = "Total revenue is calculated by adding the listed pizza prices.",
+    locations = cells_column_labels(columns = total_revenue)
+  )
+```
+
+### Prompt 6: Explain why the table is worth adding to your MSDM project written report or presentation slides.
+
+This table is useful because it brings several measurements together in one place. The audience can compare the pizza categories without looking at multiple separate tables.
+
+The table also includes both exact numbers and visual bars. The numbers provide specific information, while the bars make it easier to see which categories generated more revenue. This makes the table useful for a presentation because the audience can understand the results quickly.
+
+A similar table could be used in the MSDM CEP project with customer survey data. For example, the rows could show customer-experience factors, and the columns could show satisfaction, intention to revisit, and willingness to recommend.
+
+## Conclusion
+
+This assignment helped me understand that tables and charts can work together. Charts are useful for showing patterns quickly, while tables provide the exact values behind those patterns.
+
+The `gt` and `gtExtras` packages make it easier to create tables that are both professional and visually interesting. The pizza sales table is only an example, but the same approach could later be used to analyze customer feedback from The Restaurant at Kellogg Ranch.
+
+## Appendix
+
+### GitHub Repository
+
+[Click here to visit the GitHub repository](PASTE-YOUR-GITHUB-URL-HERE)
+
+### GitHub Pages
+
+[Click here to view the published HTML report](PASTE-YOUR-GITHUB-PAGES-URL-HERE)
