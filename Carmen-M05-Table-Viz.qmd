@@ -161,10 +161,6 @@ The `gt` and `gtExtras` packages make it easier to create tables that are both p
 
 ## Appendix
 
-### GitHub Repository
+[Click here to visit the GitHub repository](https://github.com/carmenjimenez97/M05)
 
-[Click here to visit the GitHub repository](PASTE-YOUR-GITHUB-URL-HERE)
-
-### GitHub Pages
-
-[Click here to view the published HTML report](PASTE-YOUR-GITHUB-PAGES-URL-HERE)
+[Click here to view the published HTML report](https://carmenjimenez97.github.io/M05/Carmen-M05-Table-Viz.html)
