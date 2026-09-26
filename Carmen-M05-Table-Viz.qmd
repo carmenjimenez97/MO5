@@ -160,7 +160,4 @@ This assignment helped me understand that tables and charts can work together. C
 The `gt` and `gtExtras` packages make it easier to create tables that are both professional and visually interesting. The pizza sales table is only an example, but the same approach could later be used to analyze customer feedback from The Restaurant at Kellogg Ranch.
 
 ## Appendix
-
-[Click here to visit the GitHub repository](https://github.com/carmenjimenez97/M05)
-
-[Click here to view the published HTML report](https://carmenjimenez97.github.io/M05/Carmen-M05-Table-Viz.html)
+https://carmenjimenez97.github.io/MO5/
